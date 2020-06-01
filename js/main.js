@@ -6,6 +6,8 @@ const lentele = document.querySelector('.table-content');
 const footer = document.querySelector('.table-footer');
 
 for (let i=0; i < account.length; i++) {
+    if (account[i].income === ``) {account[i].income = 0};
+    if (account[i].expense === ``) {account[i].expense = 0};
 let HTMLrow = ``;
 HTMLrow = `<div class="table-row">
                 <div class="cell">${account[i].month}</div>

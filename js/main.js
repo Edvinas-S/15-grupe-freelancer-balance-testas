@@ -1,33 +1,58 @@
 const menesiai = ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'];
-console.log(menesiai);
 
-const lentele = document.querySelector('.table-content');
+// group by month
+let accountByMonth = account.slice(0);
+accountByMonth.sort(function(a,b) {return a.month - b.month});
 
-const footer = document.querySelector('.table-footer');
+
+const DOMcontent = document.querySelector('.table-content');
 
 for (let i=0; i < account.length; i++) {
-    if (account[i].income === ``) {account[i].income = 0};
-    if (account[i].expense === ``) {account[i].expense = 0};
+    if (!accountByMonth[i].income) {accountByMonth[i].income = 0};
+    if (!accountByMonth[i].expense) {accountByMonth[i].expense = 0};
 let HTMLrow = ``;
 HTMLrow = `<div class="table-row">
-                <div class="cell">${account[i].month}</div>
+                <div class="cell">${accountByMonth[i].month}</div>
                 <div class="cell">${menesiai[i]}</div>
-                <div class="cell">${account[i].income}Eur</div>
-                <div class="cell">${account[i].expense}Eur</div>
-                <div class="cell">${account[i].income - account[i].expense}Eur</div>
+                <div class="cell">${accountByMonth[i].income}Eur</div>
+                <div class="cell">${accountByMonth[i].expense}Eur</div>
+                <div class="cell">${accountByMonth[i].income - accountByMonth[i].expense}Eur</div>
             </div>`
-lentele.innerHTML += HTMLrow;
+DOMcontent.innerHTML += HTMLrow;
 }
 
-for (let i=0; i < account[i].length; i++) {
-let HTMLfooter = ``;
-let islaidos = 0;
+const DOMfooter = document.querySelector('.table-footer');
+
+let islaidos = 0; 
 let pajamos = 0;
-let bendra = 0;
+for (let i=0; i < account.length; i++) {
+islaidos += accountByMonth[i].expense;
+pajamos += accountByMonth[i].income;
+let bendra = pajamos - islaidos;
+let HTMLfooter = ``;
 HTMLfooter = `<div class="cell"></div>
         <div class="cell"></div>
-        <div class="cell">${pajamos += account[i].income} Eur</div>
-        <div class="cell">${islaidos += account[i].expense} Eur</div>
-        <div class="cell">${bendra = pajamos - islaidos} Eur</div>`
-footer.innerHTML = HTMLfooter;
+        <div class="cell">${pajamos} Eur</div>
+        <div class="cell">${islaidos} Eur</div>
+        <div class="cell">${bendra} Eur</div>`
+DOMfooter.innerHTML = HTMLfooter;
+}
+
+const DOMminIncome = document.querySelector(`#minIncome`);
+const DOMmaxIncome = document.querySelector(`#maxIncome`);
+const DOMminExpense = document.querySelector(`#minExpense`);
+const DOMmaxExpense = document.querySelector(`#maxExpense`);
+
+let minIncome = Infinity;
+let maxIncome = -Infinity;
+let minExpense = 1;
+let maxExpense = 1;
+
+for (let i=0; i < account.length; i++) {
+    if (minIncome < account[i].income) {
+        account[i].income = minIncome;
+    }
+    if (maxIncome > account[i].income) {
+        account[i].income = maxIncome;
+    }
 }

@@ -1,3 +1,4 @@
+
 const menesiai = ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'];
 
 // group by month
@@ -9,14 +10,15 @@ const DOMcontent = document.querySelector('.table-content');
 
 let HTMLrow = ``;
 for (let i=0; i < account.length; i++) {
-    if (!accountByMonth[i].income) {accountByMonth[i].income = 0};
-    if (!accountByMonth[i].expense) {accountByMonth[i].expense = 0};
+    let currentMonth = accountByMonth[i];
+    if (!currentMonth.income) {currentMonth.income = 0};
+    if (!currentMonth.expense) {currentMonth.expense = 0};
 HTMLrow = `<div class="table-row">
-                <div class="cell">${accountByMonth[i].month}</div>
+                <div class="cell">${currentMonth.month}</div>
                 <div class="cell">${menesiai[i]}</div>
-                <div class="cell">${accountByMonth[i].income}Eur</div>
-                <div class="cell">${accountByMonth[i].expense}Eur</div>
-                <div class="cell">${accountByMonth[i].income - accountByMonth[i].expense}Eur</div>
+                <div class="cell">${currentMonth.income}Eur</div>
+                <div class="cell">${currentMonth.expense}Eur</div>
+                <div class="cell">${currentMonth.income - currentMonth.expense}Eur</div>
             </div>`
 DOMcontent.innerHTML += HTMLrow;
 }
@@ -27,10 +29,11 @@ const DOMfooter = document.querySelector('.table-footer');
 let allExpenses = 0; 
 let allIncome = 0;
 for (let i=0; i < account.length; i++) {
-allExpenses += accountByMonth[i].expense;
-allIncome += accountByMonth[i].income;
-let money = allIncome - allExpenses;
-let HTMLfooter = ``;
+    let currentMonth = accountByMonth[i];
+    allExpenses += currentMonth.expense;
+    allIncome += currentMonth.income;
+    let money = allIncome - allExpenses;
+    let HTMLfooter = ``;
 HTMLfooter = `<div class="cell"></div>
         <div class="cell"></div>
         <div class="cell">${allIncome} Eur</div>
@@ -45,29 +48,35 @@ const DOMmaxIncome = document.querySelector(`#maxIncome`);
 const DOMminExpense = document.querySelector(`#minExpense`);
 const DOMmaxExpense = document.querySelector(`#maxExpense`);
 
-let minIncome = Infinity;
-let maxIncome = 0;
-let minExpense = Infinity;
-let maxExpense = 0;
+let minIncome = {index: 0, value: Infinity};
+let maxIncome = {index: 0, value: 0};
+let minExpense = {index: 0, value: Infinity};
+let maxExpense = {index: 0, value: 0};
 for (let i=0; i < accountByMonth.length; i++) {
-    const minIn = accountByMonth[i].income;
-    const maxIn = accountByMonth[i].income;
-    const minEx = accountByMonth[i].expense;
-    const maxEx = accountByMonth[i].expense;
-    if (minIn < minIncome && minIn !== 0) {
-        minIncome = minIn;
+    let currentMonth = accountByMonth[i];
+    const minIn = {index: 0, value: currentMonth.income};
+    const maxIn = {index: 0, value: currentMonth.income};
+    const minEx = {index: 0, value: currentMonth.expense};
+    const maxEx = {index: 0, value: currentMonth.expense};
+    if (minIn.value < minIncome.value && minIn.value !== 0) {
+        minIncome.value = minIn.value;
+        minIncome.index = i;
     }
-    if (maxIn > maxIncome) {
-        maxIncome = maxIn;
+    if (maxIn.value > maxIncome.value) {
+        maxIncome.value = maxIn.value;
+        maxIncome.index = i;
     }
-    if (minEx < minExpense && minEx !==0) {
-        minExpense = minEx;
+    if (minEx.value < minExpense.value && minEx.value !==0) {
+        minExpense.value = minEx.value;
+        minExpense.index = i;
     }
-    if (maxEx > maxExpense) {
-        maxExpense = maxEx;
+    if (maxEx.value > maxExpense.value) {
+        maxExpense.value = maxEx.value;
+        maxExpense.index = i;
     }
+
+DOMminIncome.innerHTML = menesiai[minIncome.index]+` `+'('+minIncome.value+' Eur'+')';
+DOMmaxIncome.innerHTML = menesiai[maxIncome.index]+` `+'('+maxIncome.value+' Eur'+')';
+DOMminExpense.innerHTML = menesiai[minExpense.index]+` `+'('+minExpense.value+' Eur'+')';
+DOMmaxExpense.innerHTML = menesiai[maxExpense.index]+` `+'('+maxExpense.value+' Eur'+')';
 }
-DOMminIncome.innerHTML += ` `+'('+minIncome+')';
-DOMmaxIncome.innerHTML += ` `+'('+maxIncome+')';
-DOMminExpense.innerHTML += ` `+'('+minExpense+')';
-DOMmaxExpense.innerHTML += ` `+'('+maxExpense+')';
